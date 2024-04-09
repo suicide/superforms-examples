@@ -1,44 +1,23 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { superForm } from 'sveltekit-superforms';
+  import { pushState } from '$app/navigation';
 	import SuperDebug from 'sveltekit-superforms';
 
-	export let data;
+  import EditPage from './edit/+page.svelte';
 
-	const { form, errors, message, enhance } = superForm(data.form);
+
+  const openEdit = () => pushState('/edit', {shallowEdit: true});
 </script>
 
-<SuperDebug data={$form} />
 
-<h3>Superforms testing ground - Zod</h3>
+<h3>HOME PAGE</h3>
+<button on:click={openEdit}>shallow edit</button>
 
-{#if $message}
-	<!-- eslint-disable-next-line svelte/valid-compile -->
-	<div class="status" class:error={$page.status >= 400} class:success={$page.status == 200}>
-		{$message}
-	</div>
+{#if $page.state.shallowEdit}
+  <EditPage />
 {/if}
+<SuperDebug label="$page data" data={$page} collapsible />
 
-<form method="POST" use:enhance>
-	<label>
-		Name<br />
-		<input name="name" aria-invalid={$errors.name ? 'true' : undefined} bind:value={$form.name} />
-		{#if $errors.name}<span class="invalid">{$errors.name}</span>{/if}
-	</label>
-
-	<label>
-		Email<br />
-		<input
-			name="email"
-			type="email"
-			aria-invalid={$errors.email ? 'true' : undefined}
-			bind:value={$form.email}
-		/>
-		{#if $errors.email}<span class="invalid">{$errors.email}</span>{/if}
-	</label>
-
-	<button>Submit</button>
-</form>
 
 <hr />
 <p>
